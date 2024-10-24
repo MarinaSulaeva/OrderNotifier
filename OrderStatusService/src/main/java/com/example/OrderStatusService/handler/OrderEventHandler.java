@@ -7,8 +7,8 @@ import com.example.OrderStatusService.repository.OrderRepository;
 import com.example.core.OrderEvent;
 import com.example.core.OrderStatusEvent;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -19,27 +19,23 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 @Component
-@KafkaListener(topics = "order-event")
 @RequiredArgsConstructor
+@Slf4j
 public class OrderEventHandler {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    @Autowired
     private final KafkaTemplate<String, OrderStatusEvent> kafkaTemplate;
     private final OrderRepository orderRepository;
 
+    @KafkaListener(topics = "order-topic")
     public void Handle(OrderEvent orderEvent) throws ExecutionException, InterruptedException {
         Order order = orderRepository.findByProduct(orderEvent.getProduct()).orElse(new Order());
-        if (order != null) {
+        if (!(order.getId() ==null)) {
             order.setQuantity(order.getQuantity());
             switch (order.getStatus()) {
-                case CREATED:
-                    order.setStatus(Status.IN_PROGRESS);
-                    break;
-                case FINISH:
-                    throw new ClosedOrderException();
-                case IN_PROGRESS:
-                    order.setStatus(Status.FINISH);
-                    break;
+                case CREATED -> order.setStatus(Status.IN_PROGRESS);
+                case FINISH -> throw new ClosedOrderException();
+                case IN_PROGRESS -> order.setStatus(Status.FINISH);
             }
         } else {
             order.setProduct(orderEvent.getProduct());
@@ -50,12 +46,9 @@ public class OrderEventHandler {
         String topicId = UUID.randomUUID().toString();
         OrderStatusEvent orderStatusEvent = new OrderStatusEvent(order.getStatus().toString(), OffsetDateTime.now());
         SendResult<String, OrderStatusEvent> result = kafkaTemplate.send("order-status-topic", topicId, orderStatusEvent).get();
-        logger.error("Topic: {}", result.getRecordMetadata().topic());
-        logger.info("Partition: {}", result.getRecordMetadata().partition());
-        logger.info("Offset: {}", result.getRecordMetadata().offset());
-        logger.info("Return: {}", topicId);
-//        logger.info("Received message: {}", message);
-//        logger.info("Key: {}; Partition: {}; Topic: {}, Timestamp: {}", key, partition, topic, timestamp);
-
+        log.info("Topic: {}", result.getRecordMetadata().topic());
+        log.info("Partition: {}", result.getRecordMetadata().partition());
+        log.info("Offset: {}", result.getRecordMetadata().offset());
+        log.info("Return: {}", topicId);
     }
 }

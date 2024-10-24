@@ -4,6 +4,7 @@ import com.example.OrderService.dto.OrderDto;
 import com.example.OrderService.exception.SendException;
 import com.example.OrderService.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

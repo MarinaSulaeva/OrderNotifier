@@ -1,10 +1,10 @@
-atabaseChangeLog:
+databaseChangeLog:
   - changeSet:
       id: 1.0.1
       author: Marina Sulaeva
       changes:
         - createTable:
-            tableName: order
+            tableName: order_entity
             remarks: Список заказов.
             columns:
               - column:

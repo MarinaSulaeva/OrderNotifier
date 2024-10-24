@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OrderEvent {
     String product;
-    String quantity;
+    Integer quantity;
 }
