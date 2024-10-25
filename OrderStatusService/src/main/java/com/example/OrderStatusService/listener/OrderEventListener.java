@@ -1,4 +1,4 @@
-package com.example.OrderStatusService.handler;
+package com.example.OrderStatusService.listener;
 
 import com.example.OrderStatusService.entity.Order;
 import com.example.OrderStatusService.entity.Status;
@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutionException;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class OrderEventHandler {
+public class OrderEventListener {
 
     @Autowired
     private final KafkaTemplate<String, OrderStatusEvent> kafkaTemplate;
