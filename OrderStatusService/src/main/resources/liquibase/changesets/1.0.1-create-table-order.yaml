@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1.0.1
+      author: Marina Sulaeva
+      changes:
+        - createTable:
+            tableName: order_entity
+            remarks: Список заказов.
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                  remarks: Идентификатор записи в таблице.
+              - column:
+                  name: product
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+                  remarks: Название продукта.
+              - column:
+                  name: quantity
+                  type: int
+                  remarks: Количество заказов.
+              - column:
+                  name: status
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                  remarks: Название продукта.
